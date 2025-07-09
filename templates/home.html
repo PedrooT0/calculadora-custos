@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Página Inicial</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f5f5f5;
+        }
+
+        header {
+            background-color: #4CAF50;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .nav-buttons {
+            display: inline-flex;
+            gap: 20px;
+        }
+
+        .nav-buttons a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 18px;
+            background-color: #388E3C;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .nav-buttons a:hover {
+            background-color: #2e7d32;
+        }
+
+        main {
+            padding: 50px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 36px;
+            color: #333;
+        }
+
+        p {
+            font-size: 20px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="nav-buttons">
+            <a href="/">Home</a>
+            <a href="/custos">Calcular Valores</a>
+        </div>
+
+        <div style="position: absolute; right: 20px; top: 20px;">
+    {% if current_user.is_authenticated %}
+        <span style="color: white; margin-right: 10px;">Olá, {{ current_user.email }}</span>
+        <a href="{{ url_for('logout') }}" style="background-color: #d32f2f;">Sair</a>
+    {% else %}
+        <a href="{{ url_for('login') }}">Entrar</a>
+        <a href="{{ url_for('register') }}">Registrar</a>
+    {% endif %}
+</div>
+    </header>
+
+    <main>
+        <h1>Bem-vindo!</h1>
+        <p>Este é um sistema para cálculo automático de custos por venda feito para empresas.</p>
+        <p>Use os botões acima para navegar.</p>
+    </main>
+</body>
+</html>
