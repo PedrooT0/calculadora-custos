@@ -7,7 +7,7 @@
         body {
             font-family: Arial, sans-serif;
             background-color: #f5f5f5;
-            padding: 100px 40px 40px; /* Top maior para compensar header fixo */
+            padding: 100px 40px 40px;
             margin: 0;
         }
 
@@ -24,7 +24,7 @@
             z-index: 1000;
         }
 
-        .topo a {
+        .topo a:not(.btn-sair):not(.btn-auth) {
             color: white;
             text-decoration: none;
             font-weight: bold;
@@ -35,8 +35,39 @@
             transition: background-color 0.3s;
         }
 
+
         .topo a:hover {
             background-color: #2e7d32;
+        }
+
+        .user-info {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-nome {
+            color: white;
+            font-weight: bold;
+            background-color: rgba(255, 255, 255, 0.15);
+            padding: 6px 12px;
+            border-radius: 20px;
+        }
+            .btn-sair {
+                background-color: #d32f2f;
+                color: white;
+                font-weight: bold;
+                padding: 8px 16px;
+                text-decoration: none;
+                border-radius: 20px;
+                transition: background-color 0.3s;
+            }
+
+        .btn-sair:hover {
+            background-color: #b71c1c;
         }
 
         .container {
@@ -118,124 +149,117 @@
             color: red;
             font-weight: bold;
         }
-
     </style>
 </head>
 <body>
-    <header class="topo">
-        <a href="/">Home</a>
-        <a href="/custos">Calcular Valores</a>
-        <div style="position: absolute; right: 20px; top: 20px;">
-    {% if current_user.is_authenticated %}
-        <span style="color: white; margin-right: 10px;">{{ current_user.email }}</span>
-        <a href="{{ url_for('logout') }}" style="background-color: #d32f2f;">Sair</a>
-    {% else %}
-        <a href="{{ url_for('login') }}">Entrar</a>
-        <a href="{{ url_for('register') }}">Registrar</a>
-    {% endif %}
-</div>
-    </header>
+<header class="topo">
+    <a href="/">Home</a>
+    <a href="/custos">Calcular Valores</a>
+    <a href="/clientes">Dados do Cliente</a> <!-- CERTO -->
+    <div class="user-info">
+        {% if current_user.is_authenticated %}
+            <span class="user-nome">Olá, {{ current_user.email.split('@')[0] }}</span>
+            <a href="{{ url_for('logout') }}" class="btn-sair">Sair</a>
+        {% else %}
+            <a href="{{ url_for('login') }}">Entrar</a>
+            <a href="{{ url_for('register') }}">Registrar</a>
+        {% endif %}
+    </div>
+</header>
 
-    <h1>Calculadora de Custos</h1>
+<h1>Calculadora de Custos</h1>
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <div style="text-align:center; color: green; margin: 10px 0;">
+      {% for message in messages %}
+        {{ message }}
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<form method="POST">
     <div class="container">
-        <!-- Coluna da esquerda -->
         <div class="coluna">
             <div class="subtitulo">Custos Fixos:</div>
             <div class="grupo-fixos">
-                {% set campos = ['Aluguel', 'Água', 'Energia', 'Internet/Celular', 'Salários', 'Contador', 'Marketing', 'Sistemas', 'Combustível', 'Manutenção', 'Seguros', 'Outros'] %}
-                {% for campo in campos %}
+                {% set campos_fixos = ['aluguel', 'agua', 'energia', 'internet/celular', 'salarios', 'contador', 'marketing', 'Software', 'Combustivel', 'manutencao', 'seguros', 'outros'] %}
+                {% for campo in campos_fixos %}
                     <div>
-                        <label>{{ campo }}:</label>
-                        <input type="number" step="0.01" class="campo-fixo" id="fixo_{{ loop.index }}">
+                        <label>{{ campo|capitalize }}:</label>
+                        <input type="number" step="0.01" name="{{ campo }}" value="{{ dados[campo] if campo in dados else '' }}">
                     </div>
                 {% endfor %}
             </div>
-
             <div style="margin-top: 20px;">
                 <label>Capacidade de vendas por mês:</label>
-                <input type="number" id="vendasMes" min="1" value="1">
+                <input type="number" name="vendas" min="1" value="{{ dados['vendas'] if 'vendas' in dados else 1 }}">
             </div>
-
             <div class="subtitulo">Resultados Fixos:</div>
-            <div class="resultado"><strong>Total de Custos Fixos:</strong> <span id="resultadoCustosFixos">R$ 0.00</span></div>
-            <div class="resultado"><strong>Custo Fixo por Venda:</strong> <span id="resultadoCustoPorVenda">R$ 0.00</span></div>
+            <div class="resultado"><strong>Total de Custos Fixos:</strong> R$ {{ resultado.custos_fixos if resultado.custos_fixos is defined else '0.00' }}</div>
+            <div class="resultado"><strong>Custo Fixo por Venda:</strong> R$ {{ resultado.custo_fixo_por_venda if resultado.custo_fixo_por_venda is defined else '0.00' }}</div>
         </div>
-
-        <!-- Coluna da direita -->
         <div class="coluna">
             <div class="subtitulo">Custos Variáveis por Unidade:</div>
+
             <label>Materiais + 10% de Variação:</label>
-            <input type="number" id="materiais" step="0.01">
+            <input type="number" name="materiais" step="0.01" value="{{ dados['materiais'] if 'materiais' in dados else '' }}">
 
             <label>Mão de Obra:</label>
-            <input type="number" id="maoDeObra" step="0.01">
+            <input type="number" name="maoDeObra" step="0.01" value="{{ dados['maoDeObra'] if 'maoDeObra' in dados else '' }}">
 
             <label>Frete:</label>
-            <input type="number" id="frete" step="0.01">
+            <input type="number" name="frete" step="0.01" value="{{ dados['frete'] if 'frete' in dados else '' }}">
+
+            <label>Design:</label>
+            <input type="number" name="design" step="0.01" value="{{ dados['design'] if 'design' in dados else '' }}">
 
             <label>Valor de Venda do Projeto:</label>
-            <input type="number" id="valorVenda" step="0.01">
+            <input type="number" name="valorVenda" step="0.01" value="{{ dados['valorVenda'] if 'valorVenda' in dados else '' }}">
 
             <div class="subtitulo">Resultados Variáveis:</div>
-            <div class="resultado"><strong>Custo do Projeto:</strong> <span id="resultadoCustoVariavel">R$ 0.00</span></div>
-            <div id="resultadoLucro" class="resultado"><strong>Lucro Estimado:</strong> R$ 0.00</div>
+            <div class="resultado"><strong>Custo do Projeto:</strong> R$ {{ resultado.custo_projeto if resultado.custo_projeto is defined else '0.00' }}</div>
+            <div id="resultadoLucro" class="resultado">
+                <strong>Lucro Estimado:</strong>
+                <span class="{% if resultado.lucro is defined and resultado.lucro|float >= 0 %}lucro-positivo{% else %}lucro-negativo{% endif %}">
+                    R$ {{ resultado.lucro if resultado.lucro is defined else '0.00' }}
+                </span>
+            </div>
         </div>
     </div>
+    <div style="text-align:center; padding: 20px;">
+        <button type="submit" style="padding: 10px 30px; font-size: 18px; background-color: #4CAF50; color: white; border: none; border-radius: 8px; cursor: pointer;">Calcular</button>
+    </div>
+</form>
 
-    <script>
-        function calcular() {
-            let totalFixos = 0;
-            const camposFixos = document.querySelectorAll('.campo-fixo');
-            camposFixos.forEach(input => {
-                totalFixos += parseFloat(input.value) || 0;
-            });
-            document.getElementById('resultadoCustosFixos').textContent = 'R$ ' + totalFixos.toFixed(2);
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const campos = document.querySelectorAll('input[type="number"]');
 
-            const vendas = parseInt(document.getElementById('vendasMes').value) || 1;
-            const custoPorVenda = totalFixos / vendas;
-            document.getElementById('resultadoCustoPorVenda').textContent = 'R$ ' + custoPorVenda.toFixed(2);
-
-            const materiais = parseFloat(document.getElementById('materiais').value) || 0;
-            const maoDeObra = parseFloat(document.getElementById('maoDeObra').value) || 0;
-            const frete = parseFloat(document.getElementById('frete').value) || 0;
-
-            const custoMateriaisComVariacao = materiais * 1.10;
-            const custoVariavel = custoMateriaisComVariacao + maoDeObra + frete;
-            document.getElementById('resultadoCustoVariavel').textContent = 'R$ ' + custoVariavel.toFixed(2);
-
-            const valorVenda = parseFloat(document.getElementById('valorVenda').value) || 0;
-            const lucro = valorVenda - custoVariavel;
-            const lucroElemento = document.getElementById('resultadoLucro');
-            lucroElemento.innerHTML = '<strong>Lucro Estimado:</strong> R$ ' + lucro.toFixed(2);
-            lucroElemento.className = lucro >= 0 ? 'resultado lucro-positivo' : 'resultado lucro-negativo';
-        }
-
-        function salvarDados() {
-            document.querySelectorAll('input').forEach(input => {
-                localStorage.setItem(input.id, input.value);
-            });
-        }
-
-        function carregarDados() {
-            document.querySelectorAll('input').forEach(input => {
-                const valorSalvo = localStorage.getItem(input.id);
-                if (valorSalvo !== null) {
-                    input.value = valorSalvo;
-                }
-            });
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            carregarDados();
-            calcular();
-
-            document.querySelectorAll('input').forEach(input => {
-                input.addEventListener('input', () => {
-                    calcular();
-                    salvarDados();
-                });
-            });
+    function coletarDados() {
+        const dados = {};
+        campos.forEach(input => {
+            dados[input.name] = parseFloat(input.value) || 0;
         });
-    </script>
+        return dados;
+    }
+
+    function salvarAutomatico() {
+        const dados = coletarDados();
+        fetch('/salvar_dados_ajax', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(dados)
+        }).then(resp => {
+            if (!resp.ok) console.error('Erro ao salvar');
+        }).catch(err => console.error('Erro de conexão', err));
+    }
+
+    campos.forEach(campo => {
+        campo.addEventListener('input', salvarAutomatico);
+    });
+});
+</script>
 </body>
 </html>

@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <title>Clientes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 100px 40px 40px;
+            margin: 0;
+        }
+
+        .topo {
+            position: fixed;
+            top: 0; left: 0; width: 100%;
+            background-color: #4CAF50;
+            padding: 20px 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            z-index: 1000;
+        }
+
+        .topo a:not(.btn-sair):not(.btn-auth) {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 18px;
+            background-color: #388E3C;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .topo a:hover {
+            background-color: #2e7d32;
+        }
+
+        .user-info {
+            position: absolute;
+            right: 20px; top: 20px;
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        .user-nome {
+            color: white;
+            font-weight: bold;
+            background-color: rgba(255, 255, 255, 0.15);
+            padding: 6px 12px;
+            border-radius: 20px;
+        }
+
+        .btn-sair {
+            background-color: #d32f2f;
+            color: white;
+            font-weight: bold;
+            padding: 8px 16px;
+            text-decoration: none;
+            border-radius: 20px;
+            transition: background-color 0.3s;
+        }
+
+        .btn-sair:hover {
+            background-color: #b71c1c;
+        }
+
+        form {
+            max-width: 900px;
+            background: white;
+            margin: auto;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 0 12px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+        }
+
+        form h2 {
+            margin-top: 0;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 700;
+            font-size: 24px;
+            text-align: center;
+        }
+
+        .linha {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px 25px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #333;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        input[type=text], input[type=number], input[type=date], textarea, select {
+            width: 100%;
+            padding: 8px 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            resize: vertical;
+        }
+
+        textarea {
+            min-height: 80px;
+        }
+
+        button[type=submit] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            font-weight: bold;
+            padding: 12px 28px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 25px;
+            display: block;
+            width: 100%;
+            max-width: 200px;
+            margin-left: auto;
+            margin-right: auto;
+            transition: background-color 0.3s;
+        }
+
+        button[type=submit]:hover {
+            background-color: #388E3C;
+        }
+
+        table {
+            max-width: 900px;
+            margin: 40px auto 0;
+            border-collapse: collapse;
+            width: 100%;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 0 12px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+            font-size: 14px;
+            color: #333;
+            vertical-align: middle;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .btn-excluir, .btn-editar {
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-weight: 600;
+            min-width: 60px;
+        }
+
+        .btn-excluir {
+    background-color: #d32f2f !important;
+    color: white;
+    font-weight: bold;
+    padding: 6px 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 14px;
+}
+
+.btn-excluir:hover {
+    background-color: #b71c1c !important;
+}
+
+        .btn-editar {
+            background-color: #1976D2;
+        }
+
+        .btn-editar:hover {
+            background-color: #0D47A1;
+        }
+
+        @media (max-width: 720px) {
+            .linha {
+                grid-template-columns: 1fr;
+            }
+
+            th, td {
+                font-size: 13px;
+            }
+
+            button[type=submit] {
+                max-width: 100%;
+            }
+        }
+        form.inline-form {
+    display: inline;
+    margin: 0;
+    padding: 0;
+}
+        td > div {
+    margin: 0;
+    padding: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+        .btn-editar,
+.btn-excluir {
+    display: inline-block;
+    width: auto;
+}
+.card-venda {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 30px;
+    background: #ffffff;
+    padding: 32px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    font-family: Arial, sans-serif;
+    max-width: 95%;
+    margin: 32px auto 0;
+    animation: slideIn 0.5s ease-out;
+    border: 2px solid #F57C00;
+}
+
+.titulo-card {
+    font-size: 26px;
+    font-weight: 700;
+    color: #F57C00;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 16px;
+    letter-spacing: 0.5px;
+}
+
+.box {
+    flex: 1;
+    min-width: 240px;
+    padding: 20px;
+    border-radius: 12px;
+    border: 2px solid;
+    text-align: center;
+}
+
+.box-vista {
+    background-color: #e8f5e9;
+    border-color: #4CAF50;
+}
+
+.box-prazo {
+    background-color: #e3f2fd;
+    border-color: #2196F3;
+}
+
+.descricao {
+    font-size: 15px;
+    color: #333;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.valor-vista,
+.valor-prazo {
+    font-size: 30px;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+.valor-vista {
+    color: #2e7d32;
+}
+
+.valor-prazo {
+    color: #1565C0;
+}
+
+.valores-detalhados {
+    flex: 1 1 300px;
+    font-size: 15px;
+    line-height: 1.8;
+    color: #444;
+}
+
+.valores-detalhados .destaque {
+    font-weight: 700;
+    font-size: 17px;
+    color: #000;
+    margin-top: 14px;
+}
+
+.linha-divisoria {
+    display: none;
+}
+
+.btn-whatsapp {
+    background-color: #FF5722;
+    color: white;
+    font-weight: bold;
+    border: none;
+    padding: 14px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 28px;
+    transition: background-color 0.3s, transform 0.2s;
+    width: 100%;
+    max-width: 300px;
+}
+
+.btn-whatsapp:hover {
+    background-color: #e64a19;
+    transform: scale(1.03);
+}
+</style>
+
+
+</head>
+<body>
+
+<header class="topo">
+    <a href="/">Home</a>
+    <a href="/custos">Calcular Valores</a>
+    <a href="/clientes">Dados do Cliente</a>
+    <div class="user-info">
+        {% if current_user.is_authenticated %}
+            <span class="user-nome">Olá, {{ current_user.email.split('@')[0] }}</span>
+            <a href="{{ url_for('logout') }}" class="btn-sair">Sair</a>
+        {% else %}
+            <a href="{{ url_for('login') }}">Entrar</a>
+            <a href="{{ url_for('register') }}">Registrar</a>
+        {% endif %}
+    </div>
+</header>
+
+<form method="POST">
+    <h2>Cadastro de Cliente</h2>
+    <input type="hidden" name="id" value="{{ cliente_editar.id if cliente_editar }}">
+    <div class="linha">
+        <div><label>Cliente</label><input type="text" name="cliente" required value="{{ cliente_editar.cliente if cliente_editar }}"></div>
+        <div><label>Ambiente</label><input type="text" name="ambiente" required value="{{ cliente_editar.ambiente if cliente_editar }}"></div>
+        <div><label>Endereço</label><input type="text" name="endereco" required value="{{ cliente_editar.endereco if cliente_editar }}"></div>
+        <div><label>Número</label><input type="text" name="numero" required value="{{ cliente_editar.numero if cliente_editar }}"></div>
+        <div><label>Cidade</label><input type="text" name="cidade" required value="{{ cliente_editar.cidade if cliente_editar }}"></div>
+        <div><label>Bairro</label><input type="text" name="bairro" required value="{{ cliente_editar.bairro if cliente_editar }}"></div>
+        <div><label>Telefone</label><input type="text" name="telefone" required value="{{ cliente_editar.telefone if cliente_editar }}"></div>
+        <div><label>Data do Orçamento</label><input type="date" name="data_compra" required value="{{ cliente_editar.data_compra if cliente_editar }}"></div>
+        <div><label>Previsão de Entrega</label><input type="date" name="data_entrega" required value="{{ cliente_editar.data_entrega if cliente_editar }}"></div>
+        <div><label>Custo de Fábrica do Produto</label><input type="number" step="0.01" name="valor" required value="{{ cliente_editar.valor if cliente_editar }}"></div>
+        <div><label>Parcelas</label><input type="number" name="parcelas" min="1" required value="{{ cliente_editar.parcelas if cliente_editar  }}"></div>
+    </div>
+
+    <label for="descricao" style="margin-top: 20px; display: block;">Descrição</label>
+    <textarea name="descricao">{{ cliente_editar.descricao if cliente_editar }}</textarea>
+
+    <button type="submit">Salvar</button>
+</form>
+
+{% if clientes %}
+<table>
+    <thead>
+        <tr>
+            <th>Cliente</th>
+            <th>Data do Orçamento</th>
+            <th>Previsão de Entrega</th>
+            <th>Custo de Fabricação</th>
+            <th>Ambiente</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for c in clientes %}
+
+<tr class="linha-cliente"
+    data-telefone="{{ c['telefone'] }}"
+    data-parcelas="{{ c['parcelas'] }}"
+    data-cidade="{{ c['cidade'] }}"
+    data-descricao="{{ c['descricao'] }}">
+
+
+    <td>{{ c['cliente'] }}</td>
+    <td>{{ c['data_compra'] }}</td>
+    <td>{{ c['data_entrega'] }}</td>
+    <td>R$ {{ '%.2f' % c['valor_com_desconto'] }}</td>
+    <td>{{ c['ambiente'] }}</td>
+    <td style="padding: 4px; text-align: center;">
+        <form method="GET" action="/clientes" class="inline-form">
+            <input type="hidden" name="editar" value="{{ c['id'] }}">
+            <button type="submit" class="btn-editar">Editar</button>
+        </form>
+        <form method="POST" action="/clientes/excluir" class="inline-form">
+            <input type="hidden" name="id" value="{{ c['id'] }}">
+            <button type="submit" class="btn-excluir">Excluir</button>
+        </form>
+
+</td>
+
+</tr>
+{% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+
+<script>
+const parametros = {
+    margemLucro: {{ parametros.margem_lucro or 0 }},
+    taxaMaquininha: {{ parametros.taxa_maquininha or 0 }},
+    descontoAvista: {{ parametros.desconto_avista or 0 }}
+};
+const custoFixoValor = {{ resultado.custo_fixo_por_venda or 0 }};
+
+const linhas = document.querySelectorAll(".linha-cliente");
+
+
+        // Impede que cliques em botões dentro da linha disparem o clique da linha
+        document.querySelectorAll("form.inline-form button").forEach(btn => {
+            btn.addEventListener("click", e => {
+                e.stopPropagation();
+            });
+        });
+let linhaAtiva = null;
+
+linhas.forEach(linha => {
+            linha.addEventListener("click", (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (e.target.closest("button") || e.target.closest("form")) return;
+
+
+        // Remove card anterior, se houver
+        document.querySelectorAll(".linha-card").forEach(el => el.remove());
+        if (linha === linhaAtiva) {
+            linhaAtiva = null;
+            return;
+        }
+
+        const tds = linha.querySelectorAll("td");
+        const nome = tds[0].innerText;
+        const dataEntrega = tds[2].innerText;
+        const valorStr = tds[3].innerText.replace("R$ ", "").trim();
+        const ambiente = tds[4].innerText;
+        const telefone = linha.getAttribute("data-telefone");
+
+        const custoFabrica = parseFloat(valorStr.replace(",", ".")) || 0;
+        const parcelas = parseInt(linha.getAttribute("data-parcelas")) || 10;
+
+        const custoFixo = custoFixoValor;
+        const custoTotal = custoFabrica + custoFixo;
+        const precoLucro = custoTotal * (1 + parametros.margemLucro / 100);
+        const acrescimoMaquininha = precoLucro * (parametros.taxaMaquininha / 100);
+        const valorPrazo = precoLucro + acrescimoMaquininha;
+        const valorVista = valorPrazo * (1 - parametros.descontoAvista / 100);
+        const valorParcela = valorPrazo / parcelas;
+        const cidade = linha.getAttribute("data-cidade") || '';
+        const descricao = linha.getAttribute("data-descricao");
+
+        const template = document.getElementById("card-template");
+        const card = template.content.cloneNode(true);
+
+        card.querySelector(".valor-vista").innerText = `R$ ${valorVista.toFixed(2).replace('.', ',')}`;
+        card.querySelector(".valor-prazo").innerText = `R$ ${valorPrazo.toFixed(2).replace('.', ',')}`;
+        card.querySelector(".valor-parcela").innerText = `R$ ${valorParcela.toFixed(2).replace('.', ',')}`;
+        card.querySelector(".info-parcelas").innerText = `${parcelas}x`;
+        card.querySelector(".custo-fabrica").innerText = `R$ ${custoFabrica.toFixed(2).replace('.', ',')}`;
+        card.querySelector(".custo-fixo").innerText = `R$ ${custoFixo.toFixed(2).replace('.', ',')}`;
+        card.querySelector(".custo-total").innerText = `R$ ${custoTotal.toFixed(2).replace('.', ',')}`;
+        card.querySelector(".preco-lucro").innerText = `R$ ${precoLucro.toFixed(2).replace('.', ',')}`;
+        card.querySelector(".acrescimo-maquininha").innerText = `R$ ${acrescimoMaquininha.toFixed(2).replace('.', ',')}`;
+
+        const cardElement = card.children[0];
+linha.insertAdjacentElement("afterend", cardElement);
+linhaAtiva = linha;
+
+cardElement.querySelector(".btn-whatsapp").addEventListener("click", () => {
+    let tel = telefone || "";
+    tel = tel.replace(/\D/g, '');
+    if (tel.length < 10) {
+        alert("Telefone inválido!");
+        return;
+    }
+
+    const cidade = linha.getAttribute("data-cidade") || '';
+    const descricao = linha.getAttribute("data-descricao") || '';
+
+
+const empresa = {
+    nome: {{ (empresa.nome or '') | tojson }},
+    telefone: {{ (empresa.telefone or '') | tojson }},
+    endereco: {{ (empresa.endereco or '') | tojson }},
+    site: {{ (empresa.site or '') | tojson }}
+};
+
+    const msg =
+`📄 *ORÇAMENTO*
+
+👤 Cliente: ${nome}
+📱 Telefone: ${telefone}
+🏙️ Cidade: ${cidade}
+
+🛠️ Produto/Serviço: ${descricao}
+
+💰 *Valores:*
+À Vista: R$ ${valorVista.toFixed(2).replace('.', ',')} (${parametros.descontoAvista}% de desconto)
+A Prazo: R$ ${valorPrazo.toFixed(2).replace('.', ',')} (${parcelas}x de R$ ${valorParcela.toFixed(2).replace('.', ',')})
+
+📦 Entrega prevista: ${dataEntrega}
+
+───────────────
+🏢 *${empresa.nome}*
+📞 ${empresa.telefone}
+📍 ${empresa.endereco}
+🌐 ${empresa.site}
+`;
+
+    window.open(`https://wa.me/55${tel}?text=${encodeURIComponent(msg)}`, '_blank');
+});
+
+// Inserir o card na tabela
+linha.insertAdjacentElement("afterend", card.children[0]);
+linhaAtiva = linha;
+
+    });
+});
+</script>
+
+
+<template id="card-template">
+<tr class="linha-card">
+    <td colspan="6">
+        <div class="card-venda destaque-flutuante">
+            <div class="titulo-card">💰 Preço de Venda</div>
+
+            <div class="box box-vista">
+                <div class="descricao">À Vista (com {{ parametros.desconto_avista }}% desc.)</div>
+                <div class="valor-vista">R$ --</div>
+            </div>
+
+            <div class="box box-prazo">
+                <div class="descricao">A Prazo (<span class="info-parcelas">10x</span> de <span class="valor-parcela">R$ --</span>)</div>
+                <div class="valor-prazo">R$ --</div>
+            </div>
+
+            <hr class="linha-divisoria">
+
+            <div class="valores-detalhados">
+                <div>Custo de Fábrica: <span class="custo-fabrica">R$ --</span></div>
+                <div>Alocação Custo Fixo (10%): <span class="custo-fixo">R$ --</span></div>
+                <div>Custos Variáveis (0%): <span class="custos-variaveis">R$ 0,00</span></div>
+                <div class="destaque">Custo Total do Produto: <span class="custo-total">R$ --</span></div>
+                <div>Preço com Margem de Lucro ({{ parametros.margem_lucro }}%): <span class="preco-lucro">R$ --</span></div>
+                <div>Acréscimo Maquininha ({{ parametros.taxa_maquininha }}%): <span class="acrescimo-maquininha">R$ --</span></div>
+            </div>
+
+            <button class="btn-whatsapp">💬 Enviar WhatsApp</button>
+        </div>
+    </td>
+</tr>
+</template>
+
+
+</body>
+</html>

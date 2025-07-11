@@ -15,6 +15,7 @@
             background-color: #4CAF50;
             padding: 20px;
             text-align: center;
+            position: relative;
         }
 
         .nav-buttons {
@@ -37,19 +38,91 @@
             background-color: #2e7d32;
         }
 
-        main {
-            padding: 50px;
-            text-align: center;
+        .user-info {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
-        h1 {
-            font-size: 36px;
-            color: #333;
+        .user-nome {
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            background-color: rgba(255, 255, 255, 0.15);
+            padding: 6px 12px;
+            border-radius: 20px;
         }
 
-        p {
-            font-size: 20px;
-            color: #666;
+        .btn-sair {
+            background-color: #d32f2f;
+            color: white;
+            font-weight: bold;
+            padding: 8px 16px;
+            text-decoration: none;
+            border-radius: 20px;
+            transition: background-color 0.3s;
+        }
+
+        .btn-sair:hover {
+            background-color: #b71c1c;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+        }
+
+        h2 {
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 20px;
+            margin-bottom: 5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+        }
+
+        .form-row > div {
+            flex: 1;
+        }
+
+        button {
+            margin-top: 30px;
+            background-color: #4CAF50;
+            color: white;
+            font-weight: bold;
+            border: none;
+            padding: 16px;
+            font-size: 18px;
+            width: 100%;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #4CAF50;
         }
     </style>
 </head>
@@ -58,23 +131,80 @@
         <div class="nav-buttons">
             <a href="/">Home</a>
             <a href="/custos">Calcular Valores</a>
+            <a href="/clientes">Dados do Cliente</a>
         </div>
 
-        <div style="position: absolute; right: 20px; top: 20px;">
-    {% if current_user.is_authenticated %}
-        <span style="color: white; margin-right: 10px;">Olá, {{ current_user.email }}</span>
-        <a href="{{ url_for('logout') }}" style="background-color: #d32f2f;">Sair</a>
-    {% else %}
-        <a href="{{ url_for('login') }}">Entrar</a>
-        <a href="{{ url_for('register') }}">Registrar</a>
-    {% endif %}
-</div>
+        <div class="user-info">
+            {% if current_user.is_authenticated %}
+                <span class="user-nome">Olá, {{ current_user.email.split('@')[0] }}</span>
+                <a class="btn-sair" href="{{ url_for('logout') }}">Sair</a>
+            {% else %}
+                <a class="btn-auth" href="{{ url_for('login') }}">Entrar</a>
+                <a class="btn-auth" href="{{ url_for('register') }}">Registrar</a>
+            {% endif %}
+        </div>
     </header>
 
-    <main>
-        <h1>Bem-vindo!</h1>
-        <p>Este é um sistema para cálculo automático de custos por venda feito para empresas.</p>
-        <p>Use os botões acima para navegar.</p>
-    </main>
+    <form method="POST">
+        <div class="container">
+            <h2>📋 Dados da Empresa</h2>
+            <label>Nome da Empresa *</label>
+            <input type="text" name="nome_empresa" value="{{ empresa.nome if empresa else '' }}" required>
+
+            <div class="form-row">
+                <div>
+                    <label>Telefone</label>
+                    <input type="text" name="telefone" value="{{ empresa.telefone if empresa else '' }}">
+                </div>
+                <div>
+                    <label>CNPJ</label>
+                    <input type="text" name="cnpj" value="{{ empresa.cnpj if empresa else '' }}">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div>
+                    <label>Instagram</label>
+                    <input type="text" name="instagram" value="{{ empresa.instagram if empresa else '' }}">
+                </div>
+                <div>
+                    <label>Facebook</label>
+                    <input type="text" name="facebook" value="{{ empresa.facebook if empresa else '' }}">
+                </div>
+            </div>
+
+            <label>Endereço</label>
+            <input type="text" name="endereco" value="{{ empresa.endereco if empresa else '' }}">
+
+            <label>Site</label>
+            <input type="text" name="site" value="{{ empresa.site if empresa else '' }}">
+
+            <button type="submit">Salvar Alterações</button>
+        </div>
+
+        <div class="container">
+            <h2>🧮 Parâmetros de Cálculo</h2>
+
+            <div class="form-row">
+                <div>
+                    <label>Margem de Lucro Desejada (%)</label>
+                    <input type="number" name="margem_lucro" value="{{ parametros.margem_lucro if parametros else '' }}">
+                </div>
+                <div>
+                    <label>Taxa Padrão da Maquininha (%)</label>
+                    <input type="number" name="taxa_maquininha" value="{{ parametros.taxa_maquininha if parametros else '' }}">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div>
+                    <label>Desconto Padrão à Vista (%)</label>
+                    <input type="number" name="desconto_avista" value="{{ parametros.desconto_avista if parametros else '' }}">
+                </div>
+            </div>
+
+            <button type="submit">Salvar Parâmetros de Cálculo</button>
+        </div>
+    </form>
 </body>
 </html>
