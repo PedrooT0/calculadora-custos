@@ -471,7 +471,7 @@ linhas.forEach(linha => {
         const precoLucro = custoTotal * (1 + parametros.margemLucro / 100);
         const acrescimoMaquininha = precoLucro * (parametros.taxaMaquininha / 100);
         const valorPrazo = precoLucro + acrescimoMaquininha;
-        const valorVista = valorPrazo * (1 - parametros.descontoAvista / 100);
+        const valorVista = precoLucro * (1 - parametros.descontoAvista / 100);  // <-- aqui
         const valorParcela = valorPrazo / parcelas;
         const cidade = linha.getAttribute("data-cidade") || '';
         const descricao = linha.getAttribute("data-descricao");
@@ -566,7 +566,7 @@ linhaAtiva = linha;
 
             <div class="valores-detalhados">
                 <div>Custo de Fábrica: <span class="custo-fabrica">R$ --</span></div>
-                <div>Alocação Custo Fixo (10%): <span class="custo-fixo">R$ --</span></div>
+                <div>Alocação Custo Fixo : <span class="custo-fixo">R$ --</span></div>
                 <div>Custos Variáveis (0%): <span class="custos-variaveis">R$ 0,00</span></div>
                 <div class="destaque">Custo Total do Produto: <span class="custo-total">R$ --</span></div>
                 <div>Preço com Margem de Lucro ({{ parametros.margem_lucro }}%): <span class="preco-lucro">R$ --</span></div>
