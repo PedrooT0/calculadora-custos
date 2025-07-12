@@ -199,6 +199,7 @@
             <div class="subtitulo">Resultados Fixos:</div>
             <div class="resultado"><strong>Total de Custos Fixos:</strong> R$ {{ resultado.custos_fixos if resultado.custos_fixos is defined else '0.00' }}</div>
             <div class="resultado"><strong>Custo Fixo por Venda:</strong> R$ {{ resultado.custo_fixo_por_venda if resultado.custo_fixo_por_venda is defined else '0.00' }}</div>
+
         </div>
         <div class="coluna">
             <div class="subtitulo">Custos Variáveis por Unidade:</div>
@@ -226,6 +227,16 @@
                     R$ {{ resultado.lucro if resultado.lucro is defined else '0.00' }}
                 </span>
             </div>
+            <div class="resultado">
+    <strong>Margem de Lucro Real:</strong>
+    {% if resultado.lucro_percentual is defined %}
+        <span style="color: {{ 'green' if resultado.lucro_percentual|float >= 0 else 'red' }};">
+            {{ '%.2f' % resultado.lucro_percentual }}%
+        </span>
+    {% else %}
+        --
+    {% endif %}
+</div>
         </div>
     </div>
     <div style="text-align:center; padding: 20px;">

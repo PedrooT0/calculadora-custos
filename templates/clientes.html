@@ -367,7 +367,7 @@
         <div><label>Telefone</label><input type="text" name="telefone" required value="{{ cliente_editar.telefone if cliente_editar }}"></div>
         <div><label>Data do Orçamento</label><input type="date" name="data_compra" required value="{{ cliente_editar.data_compra if cliente_editar }}"></div>
         <div><label>Previsão de Entrega</label><input type="date" name="data_entrega" required value="{{ cliente_editar.data_entrega if cliente_editar }}"></div>
-        <div><label>Custo de Fábrica do Produto</label><input type="number" step="0.01" name="valor" required value="{{ cliente_editar.valor if cliente_editar }}"></div>
+        <div><label>Custo Final de Venda</label><input type="number" step="0.01" name="valor" required value="{{ cliente_editar.valor if cliente_editar }}"></div>
         <div><label>Parcelas</label><input type="number" name="parcelas" min="1" required value="{{ cliente_editar.parcelas if cliente_editar  }}"></div>
     </div>
 
@@ -467,7 +467,7 @@ linhas.forEach(linha => {
         const parcelas = parseInt(linha.getAttribute("data-parcelas")) || 10;
 
         const custoFixo = custoFixoValor;
-        const custoTotal = custoFabrica + custoFixo;
+        const custoTotal = custoFabrica;
         const precoLucro = custoTotal * (1 + parametros.margemLucro / 100);
         const acrescimoMaquininha = precoLucro * (parametros.taxaMaquininha / 100);
         const valorPrazo = precoLucro + acrescimoMaquininha;
@@ -484,7 +484,7 @@ linhas.forEach(linha => {
         card.querySelector(".valor-parcela").innerText = `R$ ${valorParcela.toFixed(2).replace('.', ',')}`;
         card.querySelector(".info-parcelas").innerText = `${parcelas}x`;
         card.querySelector(".custo-fabrica").innerText = `R$ ${custoFabrica.toFixed(2).replace('.', ',')}`;
-        card.querySelector(".custo-fixo").innerText = `R$ ${custoFixo.toFixed(2).replace('.', ',')}`;
+        // card.querySelector(".custo-fixo").innerText = `R$ ${custoFixo.toFixed(2).replace('.', ',')}`;
         card.querySelector(".custo-total").innerText = `R$ ${custoTotal.toFixed(2).replace('.', ',')}`;
         card.querySelector(".preco-lucro").innerText = `R$ ${precoLucro.toFixed(2).replace('.', ',')}`;
         card.querySelector(".acrescimo-maquininha").innerText = `R$ ${acrescimoMaquininha.toFixed(2).replace('.', ',')}`;
@@ -566,7 +566,7 @@ linhaAtiva = linha;
 
             <div class="valores-detalhados">
                 <div>Custo de Fábrica: <span class="custo-fabrica">R$ --</span></div>
-                <div>Alocação Custo Fixo : <span class="custo-fixo">R$ --</span></div>
+                <!-- <div>Alocação Custo Fixo : <span class="custo-fixo">R$ --</span></div> -->
                 <div>Custos Variáveis (0%): <span class="custos-variaveis">R$ 0,00</span></div>
                 <div class="destaque">Custo Total do Produto: <span class="custo-total">R$ --</span></div>
                 <div>Preço com Margem de Lucro ({{ parametros.margem_lucro }}%): <span class="preco-lucro">R$ --</span></div>

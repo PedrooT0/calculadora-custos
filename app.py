@@ -128,12 +128,14 @@ def custos():
         materiais = dados['materiais'] * 1.10
         custo_projeto = round(materiais + dados['maoDeObra'] + dados['frete'] + dados['design'] + fixo_por_venda, 2)
         lucro = round(dados['valorVenda'] - custo_projeto, 2)
+        lucro_percentual = round((lucro / custo_projeto * 100), 2) if custo_projeto > 0 else 0
 
         resultado = {
             'custos_fixos': f"{total_fixos:.2f}",
             'custo_fixo_por_venda': f"{fixo_por_venda:.2f}",
             'custo_projeto': f"{custo_projeto:.2f}",
-            'lucro': f"{lucro:.2f}"
+            'lucro': f"{lucro:.2f}",
+            'lucro_percentual': lucro_percentual
         }
 
         if not dados_salvos:
@@ -159,12 +161,14 @@ def custos():
         design = float(dados.get('design', 0))  # pegar o valor do design
         custo_projeto = round(materiais + mao + frete + design + fixo_por_venda, 2)
         lucro = round(venda - custo_projeto, 2)
+        lucro_percentual = round((lucro / custo_projeto * 100), 2) if custo_projeto > 0 else 0
 
         resultado = {
             'custos_fixos': f"{total_fixos:.2f}",
             'custo_fixo_por_venda': f"{fixo_por_venda:.2f}",
             'custo_projeto': f"{custo_projeto:.2f}",
-            'lucro': f"{lucro:.2f}"
+            'lucro': f"{lucro:.2f}",
+            'lucro_percentual': lucro_percentual
         }
 
     return render_template('custos.html', resultado=resultado, dados=dados)
